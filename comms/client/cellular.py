@@ -1,4 +1,4 @@
 #Nisputer
 #cellular.py 
-#Brad Morgan
+#B Morgan
 #Transmits GPS information over Australian celullar network to the server.

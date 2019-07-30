@@ -1,4 +1,4 @@
 #Nisputer
 #gps.py 
-#Brad Morgan
+#B Morgan
 #Receives GPS information
