@@ -10,6 +10,6 @@ Nisputer provides the following:
 
 1. Querying ECU information using Nissan Consult.
 2. A GUI Touchscreen, displaying the ECU information on a Pimoroni Hyperpixel 4.0 screen. Will support error codes.
-3. Retrieving GPS data using a GPS Module - TBD which module
-4. Connecting to the Australian cellular network and transmitting GPS data to a server - TBD which module
-5. A server module which will receive the limited GPS data and provide a web server to show the information securely.
+3. Retrieving GPS data using a GPS Module - SIM7600SA-H
+4. Connecting to the Australian cellular network and transmitting GPS data to a server - SIM7600SA-H
+5. A server module which will receive the limited GPS data and provide a web server to show the information securely. Hosted on a Raspberry Pi Zero
