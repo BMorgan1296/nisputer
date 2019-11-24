@@ -26,7 +26,7 @@ http.createServer(function(request, response) {
     if (fs.statSync(filename).isDirectory()) filename += '/index.html';
 
     fs.readFile(filename, "binary", function(err, file) {
-      if(err) {        
+      if(err) {
         response.writeHead(500, {"Content-Type": "text/plain"});
         response.write("500 Server Error" + "\n");
         response.end();
@@ -43,4 +43,4 @@ http.createServer(function(request, response) {
   });
 }).listen(parseInt(port, 10));
 
-console.log("Static file server running at\n  => http://localhost:" + port + "/\nCTRL + C to shutdown")
+console.log("GPS Server running at\n  => http://localhost:" + port + "/\nCTRL + C to shutdown")
