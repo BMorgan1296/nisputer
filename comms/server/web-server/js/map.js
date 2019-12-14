@@ -1,74 +1,97 @@
-//https://stackoverflow.com/questions/28517050/how-to-constantly-update-data-to-a-page-using-node-js-and-express
-//////////////////////////////
+var map;
+var markerLat = 0.0;
+var markerLong = 0.0;
+var imgSrc = "https://upload.wikimedia.org/wikipedia/commons/e/ec/RedDot.svg";
 
-var vectorLayer = new ol.layer.Vector({ // VectorLayer({
-  source: new ol.source.Vector(),
-});
-var map = new ol.Map({
-  layers: [
-    new ol.layer.Tile({ // TileLayer({
-      source: new ol.source.OSM()
-    }),
-    vectorLayer,
-  ],
-  target: 'map',
-  view: new ol.View({
-    center: [0, 0],
-    zoom: 2
-  })
-});
-console.log(map.getInteractions());
-var dblClickInteraction;
-// find DoubleClickZoom interaction
-map.getInteractions().getArray().forEach(function(interaction) {
-  if (interaction instanceof ol.interaction.DoubleClickZoom) {
-    dblClickInteraction = interaction;
-  }
-});
-// remove from map
-map.removeInteraction(dblClickInteraction)
-var vectorSource = vectorLayer.getSource();
+var extra = 0.01
 
-function addMarker(coordinates) 
+var vectorLayer;
+
+function updateMarkerPosition(init)
 {
-    try
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() 
     {
-        vectorSource.removeFeature(vectorSource.getFeatures()[0])
-    }
-    catch
-    {
-        //All Good
-    }
-    console.log(coordinates);
-    var marker = new ol.Feature(new ol.geom.Point(coordinates));
-    var zIndex = 1;
-    marker.setStyle(new ol.style.Style(
-    {
-        image: new ol.style.Icon((
+      if (this.readyState == 4 && this.status == 200) 
+      {
+        res = JSON.parse(this.responseText);
+        markerLat = res.lat;
+        markerLong = res.long;
+        if(init == 1)
         {
-            anchor: [0.5, 160],
-            anchorXUnits: "fraction",
-            anchorYUnits: "pixels",
-            opacity: 1,
-            src: "img/location.png",
-            scale: 0.19,
-            zIndex: zIndex
-        })),
-        zIndex: zIndex
-    }));
-    vectorSource.addFeature(marker);
+            initialise_map();
+            set_marker();
+        }
+        else
+        {
+            clear_marker();
+            set_marker();            
+        }
+      }
+    };
+    xhttp.open("GET", "/coords.json", true);
+    xhttp.send();
 }
-map.on('dblclick', function(evt) {
-  console.log(ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326'));
-  addMarker(evt.coordinate);
-});/*
-var south = 24.0;
-var west = -125.8;
-var north = 49.6;
-var east = -66.4;
-// [maxx, maxy, minx, miny]
-var extent = ol.proj.transformExtent([east, north, west, south], 'EPSG:4326', 'EPSG:3857');
-map.getView().fit(extent, {
-  size: map.getSize(),
-  padding: [5, 5, 5, 5]
-});*/
+
+function initialise_map()
+{
+    map = new ol.Map(
+    {
+        target: "map",
+        layers: [
+            new ol.layer.Tile(
+            {
+                source: new ol.source.OSM(
+                {
+                    url: "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                })
+            })
+        ],
+        view: new ol.View(
+        {
+            center: ol.proj.fromLonLat([markerLong, markerLat]),
+            zoom: 11
+        })
+    });
+}
+
+function set_marker() 
+{
+    vectorLayer = new ol.layer.Vector(
+    {
+        source:new ol.source.Vector(
+        {
+            features: [new ol.Feature(
+            {
+                geometry: new ol.geom.Point(ol.proj.transform([markerLong, markerLat], 'EPSG:4326', 'EPSG:3857')),
+            })]
+        }),
+        style: new ol.style.Style(
+        {
+            image: new ol.style.Icon(
+            {
+                anchor: [0.5, 0.5],
+                anchorXUnits: "fraction",
+                anchorYUnits: "fraction",
+                src: imgSrc
+            })
+        })
+    });
+
+    map.addLayer(vectorLayer);
+}
+
+function clear_marker()
+{
+    map.removeLayer(vectorLayer);
+}
+
+window.onload = function()
+{
+    updateMarkerPosition(1);
+};
+
+window.setInterval(function()
+{
+    updateMarkerPosition(0);
+}, 4000);
