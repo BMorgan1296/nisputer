@@ -6,32 +6,48 @@ var port = 3434,
 
 var long = 0.0;
 var lat = 0.0;
+var gpsRecvTime = new Date().getTime();
 
-  app.use(parser.urlencoded({extended : true}));
-  app.get("/", function(req, res) 
-  {
+app.use(parser.urlencoded(
+{
+    extended: true
+}));
+app.get("/", function(req, res)
+{
     res.sendFile(path.join(__dirname + '/index.html'));
-  });
+});
 
-  app.get("/js/map.js", function(req, res)
-  {
+app.get("/js/map.js", function(req, res)
+{
     res.sendFile(path.join(__dirname + '/js/map.js'));
-  });
+});
 
-  app.get("/css/map.css", function(req, res)
-  {
+app.get("/css/map.css", function(req, res)
+{
     res.sendFile(path.join(__dirname + '/css/map.css'));
-  });
+});
 
-  app.get("/img/location.png", function(req, res)
-  {
+app.get("/img/location.png", function(req, res)
+{
     res.sendFile(path.join(__dirname + '/img/location.png'));
-  });
+});
 
-  app.get("/coords.json", function(req, res)
-  {
-  	res.send(JSON.stringify({ lat: -34.795690, long: 138.669570 }))
-  });
+app.get("/coords.json", function(req, res)
+{
+    res.send(JSON.stringify(
+    {
+        lat: -34.795690,
+        long: 138.669570,
+        date: gpsRecvTime
+    }))
+});
+
+app.post("coords.json", function(req, res)
+{
+    long = req.body.long;
+    lat = req.body.lat;
+    gpsRecvTime = Date.getTime()
+});
 
 //Start the server and make it listen for connections on port 8080
 
