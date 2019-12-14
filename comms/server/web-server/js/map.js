@@ -7,6 +7,26 @@ var extra = 0.01
 
 var vectorLayer;
 
+function secondsToTime(msecs)
+{
+    var secs = msecs/1000
+    secs = Math.round(secs);
+    var hours = Math.floor(secs / (60 * 60));
+
+    var divisor_for_minutes = secs % (60 * 60);
+    var minutes = Math.floor(divisor_for_minutes / 60);
+
+    var divisor_for_seconds = divisor_for_minutes % 60;
+    var seconds = Math.ceil(divisor_for_seconds);
+
+    var obj = {
+        "h": hours,
+        "m": minutes,
+        "s": seconds
+    };
+    return obj;
+}
+
 function updateMarkerPosition(init)
 {
     var xhttp = new XMLHttpRequest();
@@ -17,6 +37,8 @@ function updateMarkerPosition(init)
         res = JSON.parse(this.responseText);
         markerLat = res.lat;
         markerLong = res.long;
+        var d = new Date().getTime();
+        console.log(secondsToTime((d - res.date)));
         if(init == 1)
         {
             initialise_map();
