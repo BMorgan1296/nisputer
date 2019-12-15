@@ -2,3 +2,5 @@
 comms/server/web-server/node_modules/*
 comms/server/web-server/.cache/*
 comms/server/web-server/dist/*
+comms/server/web-server/npm-debug.log
+*.log
