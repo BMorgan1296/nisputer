@@ -10,4 +10,7 @@ cd web-server
 npm install
 cd ..
 
+#Run databaseCommands.txt stuff in mysql
+
 #add as a service
+#or run sudo npm start etc.

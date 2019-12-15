@@ -1,6 +1,6 @@
 var map;
 var markerLat = 0.0;
-var markerLong = 0.0;
+var markerLon = 0.0;
 var imgSrc = "https://upload.wikimedia.org/wikipedia/commons/e/ec/RedDot.svg";
 
 var extra = 0.01
@@ -36,7 +36,7 @@ function updateMarkerPosition(init)
       {
         res = JSON.parse(this.responseText);
         markerLat = res.lat;
-        markerLong = res.long;
+        markerLon = res.lon;
         var d = new Date().getTime();
         console.log(secondsToTime((d - res.date)));
         if(init == 1)
@@ -51,7 +51,7 @@ function updateMarkerPosition(init)
         }
       }
     };
-    xhttp.open("GET", "/coords.json", true);
+    xhttp.open("GET", "/getCoords", true);
     xhttp.send();
 }
 
@@ -71,7 +71,7 @@ function initialise_map()
         ],
         view: new ol.View(
         {
-            center: ol.proj.fromLonLat([markerLong, markerLat]),
+            center: ol.proj.fromLonLat([markerLon, markerLat]),
             zoom: 11
         })
     });
@@ -85,7 +85,7 @@ function set_marker()
         {
             features: [new ol.Feature(
             {
-                geometry: new ol.geom.Point(ol.proj.transform([markerLong, markerLat], 'EPSG:4326', 'EPSG:3857')),
+                geometry: new ol.geom.Point(ol.proj.transform([markerLon, markerLat], 'EPSG:4326', 'EPSG:3857')),
             })]
         }),
         style: new ol.style.Style(
