@@ -1,6 +1,7 @@
 var map;
 var markerLat = 0.0;
 var markerLon = 0.0;
+var recvTime = 0;
 var imgSrc = "https://upload.wikimedia.org/wikipedia/commons/e/ec/RedDot.svg";
 
 var extra = 0.01
@@ -35,19 +36,22 @@ function updateMarkerPosition(init)
       if (this.readyState == 4 && this.status == 200) 
       {
         res = JSON.parse(this.responseText);
+
         markerLat = res.lat;
         markerLon = res.lon;
-        var d = new Date().getTime();
-        console.log(secondsToTime((d - res.date)));
+        recvTime = res.recvTime;
+
         if(init == 1)
         {
             initialise_map();
             set_marker();
+            //<a href="http://maps.google.com/maps?q=BLABHLABLAH+(shisthishtihtis)+%4046.090271,6.657248">Link to Car</a>
+            document.getElementById("link").href = "http://maps.google.com/maps?q="+markerLat+","+markerLon;
         }
         else
         {
             clear_marker();
-            set_marker();            
+            set_marker();
         }
       }
     };
@@ -103,6 +107,14 @@ function set_marker()
     map.addLayer(vectorLayer);
 }
 
+function changeRecvTime()
+{
+    var d = new Date().getTime();
+    var update = secondsToTime((d - res.recvTime));
+    var timeString = 'Time since last GPS update: '+update.h+':'+update.m+':'+update.s;
+    document.getElementById("recvTime").innerHTML = timeString;
+}
+
 function clear_marker()
 {
     map.removeLayer(vectorLayer);
@@ -117,3 +129,8 @@ window.setInterval(function()
 {
     updateMarkerPosition(0);
 }, 4000);
+
+window.setInterval(function()
+{
+    changeRecvTime();
+}, 500);

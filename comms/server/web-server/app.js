@@ -163,7 +163,7 @@ app.get("/getCoords", function(req, res)
             {
                lat: Number(results[0].lat),
                lon: Number(results[0].lon),
-               date: Number(results[0].recvTime)
+               recvTime: Number(results[0].recvTime)
             }));
         });
     }
