@@ -28,9 +28,6 @@ app.use(parser.urlencoded({extended : true}));
 app.use(parser.json());
 
 var port = 3434;
-var long = 0.0;
-var lat = 0.0;
-var gpsRecvTime = new Date().getTime();
 
 //Login expiry
 var expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
@@ -43,9 +40,10 @@ app.use(parser.urlencoded(
 {
     extended: true
 }));
+
 app.get("/", function(req, res)
 {
-    if (req.session.loggedin)
+    if (req.session.loggedin == true)
     {
         res.sendFile(path.join(__dirname + '/html/map.html'));
     }
@@ -57,81 +55,143 @@ app.get("/", function(req, res)
 
 app.post('/auth', function(req, res)
 {
-    var username = sanitizer.sanitize(req.body.username);
-    var password = sanitizer.sanitize(req.body.password);
-
-    if (username && password) {
-        var query = 'SELECT * FROM accounts WHERE username = ? AND password = ?';
-        connection.query(query, [username, password], function(error, results, fields)
-        {
-            if (results.length == 1)
-            {
-                req.session.loggedin = true;
-                req.session.username = username;
-                res.redirect('/map');
-            }
-            else
-            {
-                res.sendFile(path.join(__dirname + '/html/loginFail.html'));
-            }
-        });
+    if (req.session.loggedin == true)
+    {
+        res.redirect("/");
     }
     else
-    {
-        res.send('Please enter Username and Password!');
-        res.end();
+    {        
+        var username = sanitizer.sanitize(req.body.username);
+        var password = sanitizer.sanitize(req.body.password);
+
+        if (username && password) {
+            var query = 'SELECT * FROM accounts WHERE username = ? AND password = ?';
+            connection.query(query, [username, password], function(error, results, fields)
+            {
+                if (results.length == 1)
+                {
+                    req.session.loggedin = true;
+                    req.session.username = username;
+                    res.redirect('/map');
+                }
+                else
+                {
+                    res.sendFile(path.join(__dirname + '/html/loginFail.html'));
+                }
+            });
+        }
+        else
+        {
+            res.send('Please enter Username and Password!');
+            res.end();
+        }
     }
 });
 
 app.get("/map", function(req, res)
 {
-    if (req.session.loggedin)
+    if (req.session.loggedin == true)
     {
         res.sendFile(path.join(__dirname + '/html/map.html'));
     }
     else
     {
-        res.send('Please login to view this page!');
-        res.end();
+        res.redirect("/");
     }
 });
 
 app.post("/logout", function(req, res)
 {
-    req.session.loggedin = false;
-    res.redirect("/");
+    if (req.session.loggedin == true)
+    {
+        req.session.loggedin = false;
+        res.redirect("/");
+    }
+    else
+    {
+        res.redirect("/");
+    }
 });
 
 app.get("/js/map.js", function(req, res)
 {
-    res.sendFile(path.join(__dirname + '/js/map.js'));
+    if (req.session.loggedin == true)
+    {
+        res.sendFile(path.join(__dirname + '/js/map.js'));
+    }
+    else
+    {
+        res.redirect("/");
+    }
 });
 
 app.get("/css/map.css", function(req, res)
 {
-    res.sendFile(path.join(__dirname + '/css/map.css'));
+    if (req.session.loggedin == true)
+    {
+        res.sendFile(path.join(__dirname + '/css/map.css'));
+    }
+    else
+    {
+        res.redirect("/");
+    }
 });
 
 app.get("/img/location.png", function(req, res)
 {
-    res.sendFile(path.join(__dirname + '/img/location.png'));
-});
-
-app.get("/coords.json", function(req, res)
-{
-    res.send(JSON.stringify(
+    if (req.session.loggedin == true)
     {
-        lat: -34.795690,
-        long: 138.669570,
-        date: gpsRecvTime
-    }))
+        res.sendFile(path.join(__dirname + '/img/location.png'));
+    }
+    else
+    {
+        res.redirect("/");
+    }
 });
 
-app.post("coords.json", function(req, res)
+//Send Coordinates to client
+app.get("/getCoords", function(req, res)
 {
-    long = req.body.long;
-    lat = req.body.lat;
-    gpsRecvTime = Date.getTime()
+    var currTime = new Date().getTime();
+    if (req.session.loggedin == true)
+    {
+        username = sanitizer.sanitize(req.session.username);
+        var query = 'SELECT * FROM accounts WHERE username = ?';
+        connection.query(query, [username], function(error, results, fields)
+        {
+            res.send(JSON.stringify(
+            {
+               lat: Number(results[0].lat),
+               lon: Number(results[0].lon),
+               date: Number(results[0].recvTime)
+            }));
+        });
+    }
+    else
+    {
+        res.redirect("/");
+    }
+    
+});
+
+//Insert Coordinates
+app.post("/setCoords", function(req, res)
+{
+    var username = sanitizer.sanitize(req.body.username);
+    username = 'test';
+    /*var lat = sanitizer.sanitize(req.body.lat);
+    var lon = sanitizer.sanitize(req.body.lon);*/
+    var lat = -34.795690;
+    var lon = 138.669570;
+    var recvTime = new Date().getTime();
+
+    var query = 'UPDATE accounts SET lat = \'?\', lon = \'?\', recvTime = \'?\' WHERE username = ? ';
+    connection.query(query, [lat, lon, recvTime, username], function(error, results, fields)
+    {
+        console.log(query, [lat, lon, recvTime, username]);
+        console.log(error);
+    });
+    res.end();
 });
 
 //Start the server and make it listen for connections on port 8080
