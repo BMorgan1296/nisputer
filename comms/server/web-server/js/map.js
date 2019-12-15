@@ -99,7 +99,7 @@ function set_marker()
             })
         })
     });
-
+    extra = extra + 0.01;
     map.addLayer(vectorLayer);
 }
 
