@@ -73,8 +73,6 @@ app.post('/auth', function(req, res)
                 {
                     if (results.length == 1)
                     {
-                        console.log(password)
-                        console.log(results[0].password)
                         bcrypt.compare(password, results[0].password, function(err, isMatch)
                         {
                             if(err) 

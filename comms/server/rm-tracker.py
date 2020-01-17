@@ -30,7 +30,7 @@ try:
     else:
         print("Password does not match.")
 except:
-    print("Failed to query database")
+    print("Failed to query database. Check if user exists and try again.")
 
 cur.close()
 conn.close()
