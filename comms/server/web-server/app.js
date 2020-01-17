@@ -5,6 +5,7 @@ var parser = require("body-parser");
 var path = require('path');
 var mysql = require('mysql');
 var helmet = require('helmet');
+var bcrypt = require('bcrypt');
 
 var app = express();
 
@@ -60,30 +61,53 @@ app.post('/auth', function(req, res)
         res.redirect("/");
     }
     else
-    {        
+    {
         var username = sanitizer.sanitize(req.body.username);
         var password = sanitizer.sanitize(req.body.password);
 
         if (username && password) {
-            var query = 'SELECT * FROM accounts WHERE username = ? AND password = ?';
+            var query = 'SELECT * FROM accounts WHERE username = ?';
             connection.query(query, [username, password], function(error, results, fields)
             {
-                if (results.length == 1)
+                if(results != undefined)
                 {
-                    req.session.loggedin = true;
-                    req.session.username = username;
-                    res.redirect('/map');
+                    if (results.length == 1)
+                    {
+                        console.log(password)
+                        console.log(results[0].password)
+                        bcrypt.compare(password, results[0].password, function(err, isMatch)
+                        {
+                            if(err) 
+                            {
+                                throw err;
+                            } 
+                            else if(!isMatch) 
+                            {
+                                res.sendFile(path.join(__dirname + '/html/loginFail.html'));
+                            } 
+                            else
+                            {                                
+                                req.session.loggedin = true;
+                                req.session.username = username;
+                                res.redirect('/map');
+                            }
+                        }) 
+                    }
+                    else
+                    {
+                        res.sendFile(path.join(__dirname + '/html/loginFail.html'));
+                    }
                 }
                 else
                 {
                     res.sendFile(path.join(__dirname + '/html/loginFail.html'));
                 }
+                
             });
         }
         else
         {
-            res.send('Please enter Username and Password!');
-            res.end();
+            res.sendFile(path.join(__dirname + '/html/loginFail.html'));
         }
     }
 });
