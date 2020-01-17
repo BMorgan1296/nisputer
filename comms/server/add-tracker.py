@@ -3,6 +3,7 @@ import os
 import bcrypt
 import MySQLdb
 import getpass
+from base64 import b64encode
 
 print("This menu will add a new device to track.")
 username = input("Enter in the username to login and view the current location of this vehicle. Omit spaces:\n")
@@ -11,6 +12,8 @@ password = getpass.getpass('Enter in a password:\n')
 
 salt = os.urandom(32)
 hash_password = bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt())
+
+aes_key = b64encode(os.urandom(32)).decode('utf-8')
 
 try:
     #Connect to local database
@@ -21,16 +24,20 @@ try:
     #Create a Cursor object to execute queries.
     cur = conn.cursor()
 
-    query = "INSERT INTO accounts(username, password, email) VALUES (%s,%s,%s);"
-    query_tuple = (username, hash_password, email)
+    query = "INSERT INTO accounts(username, password, email, aes_key) VALUES (%s,%s,%s,%s);"
+
+    query_tuple = (username, hash_password, email, aes_key)
 
     cur.execute(query, query_tuple)
     conn.commit()
 
+print("** Added user to database **")
+
 except:
-    print("Failed to insert into database")
+    print("** Failed to insert into database **")
 
 cur.close()
 conn.close()
 
-print("Finished adding user to database.")
+print("The AES256 key (shown as Base64) for this account is the following:")
+print(aes_key)

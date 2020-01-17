@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+c#!/usr/bin/env python3
 #Nisputer
 #server.py 
 #B Morgan
@@ -17,7 +17,9 @@ ign = 1 bit
 Total = 56 bits = 7 bytes
 """
 
+import MySQLdb
 from Crypto.Cipher import AES
+
 obj = AES.new('This is a key123', AES.MODE_CBC, 'This is an IV456')
 message = "The answer is no"
 ciphertext = obj.encrypt(message)

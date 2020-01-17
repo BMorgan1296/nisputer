@@ -4,11 +4,12 @@ USE `nisputer`;
 CREATE TABLE IF NOT EXISTS `accounts` (
   `id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL UNIQUE,
-  `password` varchar(255) NOT NULL,
+  `password` varchar(256) NOT NULL,
   `email` varchar(100) NOT NULL UNIQUE,
   `lat` varchar(50) DEFAULT '0',
   `lon` varchar(50) DEFAULT '0',
-  `recvTime` varchar(50) DEFAULT 0
+  `recvTime` varchar(512) DEFAULT '0',  
+  `aes_key` varchar(50) DEFAULT '0'
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 ALTER TABLE `accounts` ADD PRIMARY KEY (`id`);
