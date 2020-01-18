@@ -6,6 +6,7 @@ var path = require('path');
 var mysql = require('mysql');
 var helmet = require('helmet');
 var bcrypt = require('bcrypt');
+const fs = require('fs');
 
 var app = express();
 
@@ -75,6 +76,11 @@ app.post('/auth', function(req, res)
                     {
                         bcrypt.compare(password, results[0].password, function(err, isMatch)
                         {
+                            var d = new Date();
+                            var stream = fs.createWriteStream("auth_log.txt", {flags:'a'})
+                            stream.write(d.toString()+" user:"+username+" loggedin:"+isMatch+" exists: true\n");
+                            stream.end();
+
                             if(err) 
                             {
                                 throw err;
@@ -93,11 +99,19 @@ app.post('/auth', function(req, res)
                     }
                     else
                     {
+                        var d = new Date();
+                        var stream = fs.createWriteStream("auth_log.txt", {flags:'a'})
+                        stream.write(d.toString()+" user:"+username+" loggedin: false exists: false\n");
+                        stream.end();
                         res.sendFile(path.join(__dirname + '/html/loginFail.html'));
                     }
                 }
                 else
                 {
+                    var d = new Date();
+                    var stream = fs.createWriteStream("auth_log.txt", {flags:'a'})
+                    stream.write(d.toString()+" user:"+username+" loggedin: false exists: false\n");
+                    stream.end();
                     res.sendFile(path.join(__dirname + '/html/loginFail.html'));
                 }
                 
@@ -192,8 +206,7 @@ app.get("/getCoords", function(req, res)
     else
     {
         res.redirect("/");
-    }
-    
+    }    
 });
 
 //Insert Coordinates
@@ -214,6 +227,19 @@ app.post("/setCoords", function(req, res)
         console.log(error);
     });
     res.end();
+});
+
+app.get("/getName", function(req, res)
+{
+    if (req.session.loggedin == true)
+    {
+        res.send(JSON.stringify(req.session.username));
+    }
+    else
+    {
+        res.redirect("/");
+    }
+    res.send();
 });
 
 //Start the server and make it listen for connections on port 8080

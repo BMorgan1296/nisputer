@@ -110,7 +110,7 @@ function set_marker()
 function changeRecvTime()
 {
     var d = new Date().getTime();
-    var update = secondsToTime((d - res.recvTime));
+    var update = secondsToTime((d - recvTime));
     var timeString = 'Time since last GPS update: '+update.h+':'+update.m+':'+update.s;
     document.getElementById("recvTime").innerHTML = timeString;
 }
@@ -120,8 +120,24 @@ function clear_marker()
     map.removeLayer(vectorLayer);
 }
 
+function getName()
+{
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() 
+    {
+      if (this.readyState == 4 && this.status == 200) 
+      {
+        res = JSON.parse(this.responseText);
+        document.getElementById("name").innerHTML = "Logged in as: "+res;
+      }
+    };
+    xhttp.open("GET", "/getName", true);
+    xhttp.send();
+}
+
 window.onload = function()
 {
+    getName();
     updateMarkerPosition(1);
 };
 
