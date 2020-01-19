@@ -150,7 +150,7 @@ window.onload = function()
 window.setInterval(function()
 {
     updateMarkerPosition(0);
-}, 4000);
+}, 2000);
 
 window.setInterval(function()
 {

@@ -213,23 +213,17 @@ app.get("/getCoords", function(req, res)
 //Insert Coordinates
 app.post("/setCoords", function(req, res)
 {
-    var username = sanitizer.sanitize(req.body.username);
-    username = 'test';
-    /*
+    var id = sanitizer.sanitize(req.body.id);
     var lat = sanitizer.sanitize(req.body.lat);
     var lon = sanitizer.sanitize(req.body.lon);
     var ign = sanitizer.sanitize(req.body.ign);
-    */
-    var lat = -34.795690;
-    var lon = 138.669570;
-    var ign = 0;
     var recvTime = new Date().getTime();
 
-    var query = 'UPDATE accounts SET lat = \'?\', lon = \'?\', ign = \'?\', recvTime = \'?\' WHERE username = ?';
-    connection.query(query, [lat, lon, ign, recvTime, username], function(error, results, fields)
+    var query = 'UPDATE accounts SET lat = ?, lon = ?, ign = ?, recvTime = ? WHERE id = ?';
+    connection.query(query, [lat, lon, ign, recvTime, id], function(error, results, fields)
     {
-        console.log(query, [lat, lon, ign, recvTime, username]);
-        console.log(error);
+        if(error)
+            console.log(error);
     });
     res.end();
 });
