@@ -24,6 +24,9 @@ import hashlib
 import base64
 from Crypto.Cipher import AES
 
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
+
 BLOCK_SIZE = 16
 pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * chr(BLOCK_SIZE - len(s) % BLOCK_SIZE)
 unpad = lambda s: s[:-ord(s[len(s) - 1:])]
@@ -44,10 +47,11 @@ def dbdisconnect(cur, conn):
 
 def get_aes_key(track_id):
     cur, conn = dbconnect()
-    query = "SELECT id FROM accounts WHERE id=%s;"
+    query = "SELECT aes_key FROM accounts WHERE id=%s;"
     cur.execute(query, [track_id])
     records = cur.fetchall()
-    print(records)
+    if records:
+        return records[0][0]
 
 
 def decrypt(enc, password):
@@ -61,7 +65,7 @@ def  deconstruct_ciphertext(cipher):
     parts = base64.b64decode(cipher)
     parts = parts.decode("utf-8").split(',')
     password = get_aes_key(parts[0])
-    message = decrypt(str.encode(parts[1]), "toBsEJjowHyVQXpsWoAj5CRHHFVukWF0=")
+    message = decrypt(str.encode(parts[1]), str(password))
     try:
         #Convert JSON back into raw tuple
         raw_tuple_hash = json.loads(message)
@@ -95,8 +99,24 @@ def init_server():
     return serverSock
 
 def post_data_to_server(data):
-    print(data)
+    #The web server is running locally, the this python script which recieves the data just sends it decrypted over post as this is easiest way.
+    server_port = "3434"
+    url = 'http://127.0.0.1:'+server_port+'/setCoords' # Set destination URL here
+    track_id = data[0]
+    lat = data[1]+"."+data[2]
+    lon = data[3]+"."+data[4]
+    ign = data[5]
 
+    post_fields = {
+        'id': track_id,
+        'lat': lat,
+        'lon': lon,
+        'ign': ign
+    }
+
+    request = Request(url, urlencode(post_fields).encode())
+    json = urlopen(request).read().decode()
+    print(json)
 
 def main():
     serverSock = init_server()
@@ -104,7 +124,7 @@ def main():
         data, addr = serverSock.recvfrom(2048)
         raw_tuple = deconstruct_ciphertext(data)
         if(raw_tuple):
-            post_data_to_server(data)
+            post_data_to_server(raw_tuple)
   
 if __name__== "__main__":
   main()
