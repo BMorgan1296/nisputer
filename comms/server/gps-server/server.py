@@ -5,6 +5,7 @@ c#!/usr/bin/env python3
 #For receiving GPS information from the raspberry pi installed in the car.
 
 """
+Structure: id,enc(LatH,LatL,LonH,LonL,ign, hash(of previous including id))
 id = 12bit
 LatH (-xx.blah) = 8 bits
 LatL (blah.xxxxxxx) = 17 bits
@@ -20,7 +21,29 @@ Total = 56 bits = 7 bytes
 import MySQLdb
 from Crypto.Cipher import AES
 
-obj = AES.new('This is a key123', AES.MODE_CBC, 'This is an IV456')
-message = "The answer is no"
-ciphertext = obj.encrypt(message)
-print(ciphertext)
+def dbconnect():
+		    #Connect to local database
+    conn = MySQLdb.connect(host="localhost",  # your host 
+                         user="root",       # username
+                         passwd="",     # password
+                         db="nisputer")   # name of the database
+    #Create a Cursor object to execute queries.
+    cur = conn.cursor()
+    return cur, conn
+
+
+# obj = AES.new('This is a key123', AES.MODE_CBC, 'This is an IV456')
+# message = "The answer is no"
+# ciphertext = obj.encrypt(message)
+# print(ciphertext)
+
+def dbdisconnect(cur, conn):
+	cur.close()
+	conn.close()
+
+
+def main():
+	cur, conn = dbconnect()
+  
+if __name__== "__main__":
+  main()
