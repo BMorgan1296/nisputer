@@ -199,6 +199,7 @@ app.get("/getCoords", function(req, res)
             {
                lat: Number(results[0].lat),
                lon: Number(results[0].lon),
+               ign: Number(results[0].ign),
                recvTime: Number(results[0].recvTime)
             }));
         });
@@ -214,16 +215,20 @@ app.post("/setCoords", function(req, res)
 {
     var username = sanitizer.sanitize(req.body.username);
     username = 'test';
-    /*var lat = sanitizer.sanitize(req.body.lat);
-    var lon = sanitizer.sanitize(req.body.lon);*/
+    /*
+    var lat = sanitizer.sanitize(req.body.lat);
+    var lon = sanitizer.sanitize(req.body.lon);
+    var ign = sanitizer.sanitize(req.body.ign);
+    */
     var lat = -34.795690;
     var lon = 138.669570;
+    var ign = 0;
     var recvTime = new Date().getTime();
 
-    var query = 'UPDATE accounts SET lat = \'?\', lon = \'?\', recvTime = \'?\' WHERE username = ? ';
-    connection.query(query, [lat, lon, recvTime, username], function(error, results, fields)
+    var query = 'UPDATE accounts SET lat = \'?\', lon = \'?\', ign = \'?\', recvTime = \'?\' WHERE username = ?';
+    connection.query(query, [lat, lon, ign, recvTime, username], function(error, results, fields)
     {
-        console.log(query, [lat, lon, recvTime, username]);
+        console.log(query, [lat, lon, ign, recvTime, username]);
         console.log(error);
     });
     res.end();
@@ -239,7 +244,6 @@ app.get("/getName", function(req, res)
     {
         res.redirect("/");
     }
-    res.send();
 });
 
 //Start the server and make it listen for connections on port 8080
