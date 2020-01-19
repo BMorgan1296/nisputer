@@ -1,4 +1,4 @@
-c#!/usr/bin/env python3
+#!/usr/bin/env python3
 #Nisputer
 #server.py 
 #B Morgan
@@ -8,18 +8,25 @@ c#!/usr/bin/env python3
 Structure: id,enc(LatH,LatL,LonH,LonL,ign, hash(of previous including id))
 id = 12bit
 LatH (-xx.blah) = 8 bits
-LatL (blah.xxxxxxx) = 17 bits
+LatL (blah.xxxxxx) = 20 bits
 
 LonH (-xxx.blah) = 9 bits
-LonL (blah.xxxxxxx) = 17 bits
+LonL (blah.xxxxxx) = 20 bits
 
 ign = 1 bit
 
 Total = 56 bits = 7 bytes
 """
-
+import socket
+import json
 import MySQLdb
+import hashlib
+import base64
 from Crypto.Cipher import AES
+
+BLOCK_SIZE = 16
+pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * chr(BLOCK_SIZE - len(s) % BLOCK_SIZE)
+unpad = lambda s: s[:-ord(s[len(s) - 1:])]
 
 def dbconnect():
 		    #Connect to local database
@@ -31,19 +38,73 @@ def dbconnect():
     cur = conn.cursor()
     return cur, conn
 
-
-# obj = AES.new('This is a key123', AES.MODE_CBC, 'This is an IV456')
-# message = "The answer is no"
-# ciphertext = obj.encrypt(message)
-# print(ciphertext)
-
 def dbdisconnect(cur, conn):
 	cur.close()
 	conn.close()
 
+def get_aes_key(track_id):
+    cur, conn = dbconnect()
+    query = "SELECT id FROM accounts WHERE id=%s;"
+    cur.execute(query, [track_id])
+    records = cur.fetchall()
+    print(records)
+
+
+def decrypt(enc, password):
+    private_key = hashlib.sha256(password.encode("utf-8")).digest()
+    enc = base64.b64decode(enc)
+    iv = enc[:16]
+    cipher = AES.new(private_key, AES.MODE_CBC, iv)
+    return unpad(cipher.decrypt(enc[16:]))
+
+def  deconstruct_ciphertext(cipher):
+    parts = base64.b64decode(cipher)
+    parts = parts.decode("utf-8").split(',')
+    password = get_aes_key(parts[0])
+    message = decrypt(str.encode(parts[1]), "toBsEJjowHyVQXpsWoAj5CRHHFVukWF0=")
+    try:
+        #Convert JSON back into raw tuple
+        raw_tuple_hash = json.loads(message)
+
+        if raw_tuple_hash[0] == parts[0]:
+            #Split the raw tuple up 
+            raw_tuple = raw_tuple_hash[:6]
+            #Separate hash
+            msg_hash = raw_tuple_hash[6]
+            #Hash the tuple
+            h = hashlib.sha256(''.join(raw_tuple).encode("utf-8")).digest()
+            h = base64.b64encode(h).decode("utf-8")
+            #compare the hashed tuple and the recieved hash
+            if h == msg_hash:
+                return raw_tuple
+            else:
+                print("Packet corruption or modification has occurred. Reason: Hash of data is different.")
+                return False
+        else:
+            print("Packet corruption or modification has occurred. Reason: Different ID")
+            return False
+    except:
+        print("Invalid JSON. Dropping data, cannot update.")
+        return False
+
+def init_server():    
+    UDP_IP_ADDRESS = "127.0.0.1"
+    UDP_PORT_NO = 3333
+    serverSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    serverSock.bind((UDP_IP_ADDRESS, UDP_PORT_NO))
+    return serverSock
+
+def post_data_to_server(data):
+    print(data)
+
 
 def main():
-	cur, conn = dbconnect()
+    serverSock = init_server()
+    while True:
+        data, addr = serverSock.recvfrom(2048)
+        raw_tuple = deconstruct_ciphertext(data)
+        if(raw_tuple):
+            post_data_to_server(data)
   
 if __name__== "__main__":
   main()
