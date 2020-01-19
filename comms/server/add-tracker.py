@@ -30,14 +30,19 @@ try:
 
     cur.execute(query, query_tuple)
     conn.commit()
+    query = "SELECT id FROM accounts WHERE username=%s;"
+    cur.execute(query, [username])
+    records = cur.fetchall()
+    print(records[0][0])
+    print("** Added user to database **\n")
 
-print("** Added user to database **")
+    print("IMPORTANT: The following information is needed to complete the tracking.")
+    print("The ID of this tracker is:", records[0][0])
+    print("The AES256 key (shown as Base64) for this account is the following:")
+    print(aes_key)
 
 except:
-    print("** Failed to insert into database **")
+    print("** Failed to insert into database **\n")
 
 cur.close()
 conn.close()
-
-print("The AES256 key (shown as Base64) for this account is the following:")
-print(aes_key)

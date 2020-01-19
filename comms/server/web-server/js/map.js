@@ -39,6 +39,7 @@ function updateMarkerPosition(init)
 
         markerLat = res.lat;
         markerLon = res.lon;
+        ign = res.ign;
         recvTime = res.recvTime;
 
         if(init == 1)
@@ -46,13 +47,18 @@ function updateMarkerPosition(init)
             initialise_map();
             set_marker();
             //<a href="http://maps.google.com/maps?q=BLABHLABLAH+(shisthishtihtis)+%4046.090271,6.657248">Link to Car</a>
-            document.getElementById("link").href = "http://maps.google.com/maps?q="+markerLat+","+markerLon;
         }
         else
         {
             clear_marker();
             set_marker();
         }
+        if(ign)
+            document.getElementById("ign").innerHTML = "Car Ignition: ON";
+        else
+            document.getElementById("ign").innerHTML = "Car Ignition: OFF";
+
+        document.getElementById("link").href = "http://maps.google.com/maps?q="+markerLat+","+markerLon;
       }
     };
     xhttp.open("GET", "/getCoords", true);
