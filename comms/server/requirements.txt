@@ -1,0 +1,4 @@
+pip==9.0.1
+mock==3.0.5
+ordereddict==1.1
+pycryptodome==3.9.4

@@ -99,7 +99,7 @@ def init_server():
     return serverSock
 
 def post_data_to_server(data):
-    #The web server is running locally, the this python script which recieves the data just sends it decrypted over post as this is easiest way.
+    #The web server is running locally, the this python script which receives the data just sends it decrypted over post as this is easiest way.
     server_port = "3434"
     url = 'http://127.0.0.1:'+server_port+'/setCoords' # Set destination URL here
     track_id = data[0]
@@ -116,15 +116,18 @@ def post_data_to_server(data):
 
     request = Request(url, urlencode(post_fields).encode())
     json = urlopen(request).read().decode()
-    print(json)
 
 def main():
     serverSock = init_server()
     while True:
         data, addr = serverSock.recvfrom(2048)
+        print(data)
         raw_tuple = deconstruct_ciphertext(data)
         if(raw_tuple):
-            post_data_to_server(raw_tuple)
+            try:
+                post_data_to_server(raw_tuple)
+            except:
+                print("Error: Check web server status, could not send data")
   
 if __name__== "__main__":
   main()
