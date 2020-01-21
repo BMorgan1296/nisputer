@@ -16,7 +16,7 @@ ip = parser.get('mysql', 'ip')
 port = parser.get('mysql', 'port')
 user = parser.get('mysql', 'user')
 pw = parser.get('mysql', 'password')
-conn = MySQLdb.connect(host="localhost",  # your host
+conn = MySQLdb.connect(host=ip,  # your host
                          port=int(port),        #port
                          user=user,       # username
                          passwd=pw,     # password

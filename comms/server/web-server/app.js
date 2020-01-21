@@ -29,7 +29,7 @@ app.use(session(
 app.use(parser.urlencoded({extended : true}));
 app.use(parser.json());
 
-var port = 3434;
+var port = 3435;
 
 //Login expiry
 var expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
@@ -244,6 +244,6 @@ app.get("/getName", function(req, res)
 
 app.listen(port);
 
-console.log("Nisputer Web Server running at\n  => http://127.0.0.1n:" + port + "/\nCTRL + C to shutdown")
+console.log("Nisputer Web Server running at\n  => http://127.0.0.1:" + port + "/\nCTRL + C to shutdown")
 
 module.exports = app;

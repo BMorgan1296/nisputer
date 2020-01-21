@@ -27,16 +27,24 @@ from Crypto.Cipher import AES
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
+from configparser import ConfigParser
+
 BLOCK_SIZE = 16
 pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * chr(BLOCK_SIZE - len(s) % BLOCK_SIZE)
 unpad = lambda s: s[:-ord(s[len(s) - 1:])]
 
 def dbconnect():
-		    #Connect to local database
-    conn = MySQLdb.connect(host="localhost",  # your host 
-                         user="root",       # username
-                         passwd="",     # password
-                         db="nisputer")   # name of the database
+    parser = ConfigParser()
+    parser.read('../server.ini')
+    ip = parser.get('mysql', 'ip')
+    port = parser.get('mysql', 'port')
+    user = parser.get('mysql', 'user')
+    pw = parser.get('mysql', 'password')
+    conn = MySQLdb.connect(host=ip,  # your host
+                             port=int(port),        #port
+                             user=user,       # username
+                             passwd=pw,     # password
+                             db="nisputer")   # name of the database
     #Create a Cursor object to execute queries.
     cur = conn.cursor()
     return cur, conn
@@ -66,6 +74,7 @@ def  deconstruct_ciphertext(cipher):
     parts = parts.decode("utf-8").split(',')
     password = get_aes_key(parts[0])
     message = decrypt(str.encode(parts[1]), str(password))
+    print(message)
     try:
         #Convert JSON back into raw tuple
         raw_tuple_hash = json.loads(message)
@@ -91,17 +100,16 @@ def  deconstruct_ciphertext(cipher):
         print("Invalid JSON. Dropping data, cannot update.")
         return False
 
-def init_server():    
+def init_server(port):    
     UDP_IP_ADDRESS = "127.0.0.1"
-    UDP_PORT_NO = 3333
+    UDP_PORT_NO = int(port)
     serverSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     serverSock.bind((UDP_IP_ADDRESS, UDP_PORT_NO))
     return serverSock
 
-def post_data_to_server(data):
+def post_data_to_server(data, port):
     #The web server is running locally, the this python script which receives the data just sends it decrypted over post as this is easiest way.
-    server_port = "3434"
-    url = 'http://127.0.0.1:'+server_port+'/setCoords' # Set destination URL here
+    url = 'http://127.0.0.1:'+port+'/setCoords' # Set destination URL here
     track_id = data[0]
     lat = data[1]+"."+data[2]
     lon = data[3]+"."+data[4]
@@ -118,14 +126,18 @@ def post_data_to_server(data):
     json = urlopen(request).read().decode()
 
 def main():
-    serverSock = init_server()
+    parser = ConfigParser()
+    parser.read('../server.ini')
+    webPort = parser.get('servers', 'webPort')
+    gpsPort = parser.get('servers', 'gpsPort')
+    serverSock = init_server(gpsPort)
     while True:
         data, addr = serverSock.recvfrom(2048)
         print(data)
         raw_tuple = deconstruct_ciphertext(data)
         if(raw_tuple):
             try:
-                post_data_to_server(raw_tuple)
+                post_data_to_server(raw_tuple, webPort)
             except:
                 print("Error: Check web server status, could not send data")
   

@@ -20,7 +20,6 @@ unpad = lambda s: s[:-ord(s[len(s) - 1:])]
 def encrypt(raw, password):
     private_key = hashlib.sha256(password.encode("utf-8")).digest()
     raw = pad(raw)
-    print(raw)
     iv = Random.new().read(AES.block_size)
     cipher = AES.new(private_key, AES.MODE_CBC, iv)
     return base64.b64encode(iv + cipher.encrypt(raw))
@@ -49,15 +48,15 @@ def main():
     #this stuff needs to be queried from the GPS device, and then sent over either wifi or cellular depending on current connection.
     track_id = "2"
     ign = "0"
-    LatH = "-34"
-    LatL = "795690"
-    LonH = "138"
-    LonL = "669570"
+    LatH = "-40"
+    LatL = "795600"
+    LonH = "139"
+    LonL = "637571"
 
     cipher = construct_ciphertext(track_id, LatH, LatL, LonH, LonL, ign)
 ######################################### Will need this socket info, aes_key and id stuff to be in a ini file or something at some point, so that the user can set it up themselves.#############################################
     UDP_IP_ADDRESS = "127.0.0.1"
-    UDP_PORT_NO = 3333
+    UDP_PORT_NO = 3436
     clientSock = init_client()
 
     while 1:

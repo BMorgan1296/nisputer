@@ -53,7 +53,9 @@ echo "[MYSQL SETUP]"
 dbIp="127.0.0.1"
 dbPort="3306"
 echo -n "" > server.ini
+echo "Setting root only permissions for server.ini..."
 chmod 600 server.ini
+echo "Done."
 
 echo "[mysql]" >> server.ini
 echo "Do you wish to install the MySQL database locally (yes/no)"
@@ -76,9 +78,9 @@ else
     echo "port=$dbPort" >> server.ini
 fi
 
-dbun=$(nonEmptyInput "Enter the username for the MySQL server:")
+dbun=$(nonEmptyInput "Enter the username for the MySQL server (may be root):")
 echo "user=$dbun" >> server.ini
-dbpw=$(silentNonEmptyInput "Enter the password for the MySQL server:")
+dbpw=$(silentNonEmptyInput "Enter the password for the MySQL server (which was just entered with mysql_secure_installation):")
 echo "password=$dbpw" >> server.ini
 
 echo ""
