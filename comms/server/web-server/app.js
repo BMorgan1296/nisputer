@@ -244,7 +244,7 @@ app.get("/getName", function(req, res)
 
 app.listen(port);
 
-console.log("GPS Server running at\n  => http://localhost:" + port + "/\nCTRL + C to shutdown")
+console.log("Nisputer Web Server running at\n  => http://127.0.0.1:" + port + "/\nCTRL + C to shutdown")
 
 module.exports = app;
 

@@ -4,6 +4,7 @@ import bcrypt
 import MySQLdb
 import getpass
 from base64 import b64encode
+from configparser import ConfigParser
 
 print("This menu will add a new device to track.")
 username = input("Enter in the username to login and view the current location of this vehicle. Omit spaces:\n")
@@ -16,11 +17,17 @@ hash_password = bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt())
 aes_key = b64encode(os.urandom(32)).decode('utf-8')
 
 #Connect to local database
-conn = MySQLdb.connect(host="127.0.0.1",  # your host
-                     port=3306,
-                     user="root",       # username
-                     passwd="",     # password
-                     db="nisputer")   # name of the database
+parser = ConfigParser()
+parser.read('./server.ini')
+ip = parser.get('mysql', 'ip')
+port = parser.get('mysql', 'port')
+user = parser.get('mysql', 'user')
+pw = parser.get('mysql', 'password')
+conn = MySQLdb.connect(host="localhost",  # your host
+                         port=int(port),        #port
+                         user=user,       # username
+                         passwd=pw,     # password
+                         db="nisputer")   # name of the database
 #Create a Cursor object to execute queries.
 cur = conn.cursor()
 

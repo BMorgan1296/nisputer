@@ -56,10 +56,12 @@ echo -n "" > server.ini
 chmod 600 server.ini
 
 echo "[mysql]" >> server.ini
-echo "Do you wish to install the MySQL database locally? (yes/no)"
+echo "Do you wish to install the MySQL database locally (yes/no)"
 read answer
 if [ "$answer" != "${answer#[Yy]}" ] ;then
-    apt-get install mysql-server -y
+	#https://superuser.com/questions/56743/mysql-wont-start
+	apt-get install mysql-server mysql-client -y
+	service mysql restart
     mysql_secure_installation
 
     echo "MySQL IP: 127.0.0.1"
@@ -79,9 +81,6 @@ echo "user=$dbun" >> server.ini
 dbpw=$(silentNonEmptyInput "Enter the password for the MySQL server:")
 echo "password=$dbpw" >> server.ini
 
-echo ""
-echo "[STARTING MYSQL SERVER]"
-service mysql restart
 echo ""
 echo "[CREATING DATABASE]"
 mysql --host=$dbIP --port=$dbPort mysql -u$dbun -p$dbpw < web-server/databaseCommands.sql
@@ -128,7 +127,8 @@ else
 	echo "Servers must started manually using start.sh"
 fi
 echo "** It is recommended that all security steps are followed at: https://www.raspberrypi.org/documentation/configuration/security.md **"
-echo "** I take no responsibility for any misconfiguration, as I have designed this to run on a Raspberry Pi Zero. **"
+echo "** I take no responsibility for any misconfiguration. I have designed this to run on a Raspberry Pi Zero. **"
+echo ""
 echo "Install complete. If there are any issues, feel free to create one at: https://github.com/BMorgan1296/nisputer/issues"
 
 ###########################################################################
