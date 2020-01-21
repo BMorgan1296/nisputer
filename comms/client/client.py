@@ -33,7 +33,7 @@ def construct_ciphertext(track_id, LatH, LatL, LonH, LonL, ign):
     #add the hash to the end of the info
     json_tuple = json.dumps((track_id, LatH,LatL,LonH,LonL,ign,h))
     #encrypt the info+hash
-    c = encrypt(json_tuple, "OT7HcWzN80NtoBsEJjowHyVQXpsWoAj5CRHHFVukWF0=")
+    c = encrypt(json_tuple, "fVolnJsrafgPc9f6HFzzizREz0PwR8W2bPV/Shu+OaI=")
     #convert track_id to base64, and this is now the start of the ciphertext. The ID is kept in plaintext so that the server knows which private key to look for.
     cipher = base64.b64encode(str.encode(track_id+","+c.decode("utf-8")))
     #append the ciphertext so that it comes after.
@@ -44,6 +44,7 @@ def init_client():
     return clientSock
 
 def main():
+    #this stuff needs to be queried from the GPS device, and then sent over either wifi or cellular depending on current connection.
     track_id = "2"
     ign = "0"
     LatH = "-34"
@@ -52,13 +53,13 @@ def main():
     LonL = "669570"
 
     cipher = construct_ciphertext(track_id, LatH, LatL, LonH, LonL, ign)
-######################################### Will need this socket info to be in a ini file or something at some point, so that the user can set it up.#############################################
+######################################### Will need this socket info, aes_key and id stuff to be in a ini file or something at some point, so that the user can set it up themselves.#############################################
     UDP_IP_ADDRESS = "127.0.0.1"
     UDP_PORT_NO = 3333
     clientSock = init_client()
 
     while 1:
-        time.sleep(4)
+        time.sleep(3)
         clientSock.sendto(cipher, (UDP_IP_ADDRESS, UDP_PORT_NO))
 
     #Get data, create raw to be encrypted, encrypt, send off. Repeat.
