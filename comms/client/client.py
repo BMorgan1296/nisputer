@@ -10,6 +10,7 @@ import hashlib
 import base64
 from Crypto.Cipher import AES
 from Crypto import Random
+from configparser import ConfigParser
 
 #Thanks to https://www.quickprogrammingtips.com/python/aes-256-encryption-and-decryption-in-python.html
 BLOCK_SIZE = 16
@@ -19,6 +20,7 @@ unpad = lambda s: s[:-ord(s[len(s) - 1:])]
 def encrypt(raw, password):
     private_key = hashlib.sha256(password.encode("utf-8")).digest()
     raw = pad(raw)
+    print(raw)
     iv = Random.new().read(AES.block_size)
     cipher = AES.new(private_key, AES.MODE_CBC, iv)
     return base64.b64encode(iv + cipher.encrypt(raw))
@@ -33,7 +35,7 @@ def construct_ciphertext(track_id, LatH, LatL, LonH, LonL, ign):
     #add the hash to the end of the info
     json_tuple = json.dumps((track_id, LatH,LatL,LonH,LonL,ign,h))
     #encrypt the info+hash
-    c = encrypt(json_tuple, "fVolnJsrafgPc9f6HFzzizREz0PwR8W2bPV/Shu+OaI=")
+    c = encrypt(json_tuple, "ISJGu9lPyv+5ADkim6HCEMm+MYpTki+dBNIAjwGFM0A=")
     #convert track_id to base64, and this is now the start of the ciphertext. The ID is kept in plaintext so that the server knows which private key to look for.
     cipher = base64.b64encode(str.encode(track_id+","+c.decode("utf-8")))
     #append the ciphertext so that it comes after.
