@@ -21,8 +21,8 @@ silentNonEmptyInput () {
 ###########################################################################
 
 if [ `whoami` != root ]; then
-    echo Please run this script as root or using sudo
-    exit
+	echo Please run this script as root or using sudo
+	exit
 fi
 
 ###########################################################################
@@ -64,18 +64,18 @@ if [ "$answer" != "${answer#[Yy]}" ] ;then
 	#https://superuser.com/questions/56743/mysql-wont-start
 	apt-get install mariadb-server mariadb-client -y
 	service mysql restart
-    mysql_secure_installation
+	mysql_secure_installation
 
-    echo "MySQL IP: 127.0.0.1"
-    echo "MySQL Port: 3306"
-    echo "ip=127.0.0.1" >> server.ini
-    echo "port=3306" >> server.ini
+	echo "MySQL IP: 127.0.0.1"
+	echo "MySQL Port: 3306"
+	echo "ip=127.0.0.1" >> server.ini
+	echo "port=3306" >> server.ini
 else
 	dbIP=$(nonEmptyInput "Please enter in the IP address of the MySQL server:")
 	dbPort=$(nonEmptyInput "Please enter in the port number of the MySQL server:")
 
-    echo "ip=$dbIP" >> server.ini
-    echo "port=$dbPort" >> server.ini
+	echo "ip=$dbIP" >> server.ini
+	echo "port=$dbPort" >> server.ini
 fi
 
 dbun=$(nonEmptyInput "Enter the username for the MySQL server (may be root):")
