@@ -37,10 +37,14 @@ apt install python3-mysqldb -y
 apt-get install python3 -y
 apt-get install python3-pip -y
 #update python dependencies
+pip3 install --upgrade pip
 pip3 install -r requirements.txt
+pip3 install bcrypt
 #Install web-server dependencies
 cd web-server
+npm install npm@latest -g
 npm install
+npm install service-systemd
 cd ..
 
 cd gps-server
@@ -101,33 +105,31 @@ echo "** Do not forget to port forward if needed, and modify firewall accordingl
 
 ###########################################################################
 
-echo ""
-echo "[AUTORUN CONFIGURATION]"
-echo "Do you wish to configure the servers to run at startup as daemons? (yes/no)"
-read answer
-if [ "$answer" != "${answer#[Yy]}" ] ;then
-	echo "Using systemd to autostart services after reboot or crash..."
-	systemctl enable mysqld.service
+# echo ""
+# echo "[AUTORUN CONFIGURATION]"
+# echo "Do you wish to configure the servers to run at startup as daemons? (yes/no)"
+# read answer
+# if [ "$answer" != "${answer#[Yy]}" ] ;then
+# 	echo "Using systemd to autostart services after reboot or crash..."
+# 	systemctl enable mysqld.service
+# 	temp="[Unit]
+# Description=Starts nisputer tracker web and gps servers
+# After=multi-user.target
 
-	nano /lib/systemd/system/nisputer-gps-server.service
-	temp="[Unit]
-Description=Starts nisputer tracker web and gps servers
-After=multi-user.target
+# [Service]
+# ExecStart=/usr/bin/python3 $PWD/gps-server/gps-server.py
 
-[Service]
-ExecStart=/usr/bin/python3 $PWD/gps-server/gps-server.py
+# [Install]
+# WantedBy=multi-user.target"
+# 	echo $temp > /lib/systemd/system/nisputer-gps-server.service
+# 	systemctl daemon-reload
+# 	systemctl enable nisputer-gps-server.service
 
-[Install]
-WantedBy=multi-user.target"
-	echo $temp > /lib/systemd/system/nisputer-gps-server.service
-	systemctl daemon-reload
-	systemctl enable nisputer-gps-server.service
-
-	service-systemd --add --service nisputer-web-server.service --cwd $PWD/web-server --app app.js
-	service nisputer-web-server.service restart
-else
-	echo "Servers must started manually using start.sh"
-fi
+# 	service-systemd --add --service nisputer-web-server.service --cwd $PWD/web-server --app app.js
+# 	service nisputer-web-server.service restart
+# else
+# 	echo "Servers must started manually using start.sh"
+# fi
 echo "** It is recommended that all security steps are followed at: https://www.raspberrypi.org/documentation/configuration/security.md **"
 echo "** I take no responsibility for any misconfiguration. I have designed this to run on a Raspberry Pi Zero. **"
 echo ""
