@@ -22,7 +22,7 @@ def encrypt(raw, password):
     raw = pad(raw)
     iv = Random.new().read(AES.block_size)
     cipher = AES.new(private_key, AES.MODE_CBC, iv)
-    return base64.b64encode(iv + cipher.encrypt(raw))
+    return base64.b64encode(iv + cipher.encrypt(raw.encode("utf-8")))
 
 def construct_ciphertext(track_id, LatH, LatL, LonH, LonL, ign):
     #convert to tuple
@@ -46,11 +46,11 @@ def init_client():
 
 def main():
     #this stuff needs to be queried from the GPS device, and then sent over either wifi or cellular depending on current connection.
-    track_id = "2"
+    track_id = "1"
     ign = "0"
     LatH = "-40"
     LatL = "795600"
-    LonH = "139"
+    LonH = "153"
     LonL = "637571"
 
     cipher = construct_ciphertext(track_id, LatH, LatL, LonH, LonL, ign)

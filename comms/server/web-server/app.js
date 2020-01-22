@@ -7,18 +7,20 @@ var mysql = require('mysql');
 var helmet = require('helmet');
 var bcrypt = require('bcrypt');
 const fs = require('fs');
-
+const ini = require('ini');
 var app = express();
 
+//Parse ini file
+const config = ini.parse(fs.readFileSync('../server.ini', 'utf-8'));
 //Create MYSQL connection
 var connection = mysql.createConnection(
 {
-    host     : 'localhost',
-    user     : 'root',
-    password : '',
+    host     : config.mysql.ip,
+    port     : config.mysql.port,
+    user     : config.mysql.user,
+    password : config.mysql.password,
     database : 'nisputer'
 });
-
 //Init Cookie and other packages
 app.use(session(
 {
@@ -36,6 +38,20 @@ var expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 
 app.use(helmet());
 app.set('trust proxy', 1); // trust first proxy
+
+function getFileFlag(filename) {
+    const stats = fs.statSync(filename);
+    const fileSizeInBytes = stats.size;
+
+    if(fileSizeInBytes < 1073741824/2)
+    {
+        return 'a';
+    }
+    else
+    {
+        return 'w';
+    }
+}
 
 
 app.use(parser.urlencoded(
@@ -77,7 +93,7 @@ app.post('/auth', function(req, res)
                         bcrypt.compare(password, results[0].password, function(err, isMatch)
                         {
                             var d = new Date();
-                            var stream = fs.createWriteStream("auth_log.txt", {flags:'a'})
+                            var stream = fs.createWriteStream("auth_log.txt", {flags:getFileFlag("auth_log.txt")})
                             stream.write(d.toString()+" user:"+username+" loggedin:"+isMatch+" exists: true\n");
                             stream.end();
 
@@ -100,7 +116,7 @@ app.post('/auth', function(req, res)
                     else
                     {
                         var d = new Date();
-                        var stream = fs.createWriteStream("auth_log.txt", {flags:'a'})
+                        var stream = fs.createWriteStream("auth_log.txt", {flags:getFileFlag("auth_log.txt")})
                         stream.write(d.toString()+" user:"+username+" loggedin: false exists: false\n");
                         stream.end();
                         res.sendFile(path.join(__dirname + '/html/loginFail.html'));
@@ -109,7 +125,7 @@ app.post('/auth', function(req, res)
                 else
                 {
                     var d = new Date();
-                    var stream = fs.createWriteStream("auth_log.txt", {flags:'a'})
+                    var stream = fs.createWriteStream("auth_log.txt", {flags:getFileFlag("auth_log.txt")})
                     stream.write(d.toString()+" user:"+username+" loggedin: false exists: false\n");
                     stream.end();
                     res.sendFile(path.join(__dirname + '/html/loginFail.html'));

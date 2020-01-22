@@ -7,3 +7,4 @@ comms/server/web-server/npm-debug.log
 comms/server/web-server/auth_log.txt
 *.ini
 comms/server/server.ini
+comms/server/gps-server/gps_log.txt
