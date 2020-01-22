@@ -19,5 +19,14 @@
     "morgan": "~1.9.0",
     "snyk": "^1.260.0"
   },
-  "snyk": true
+  "snyk": true,
+  "main": "app.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "nisputer"
+  },
+  "author": "BMorgan1296",
+  "license": "ISC",
+  "description": ""
 }

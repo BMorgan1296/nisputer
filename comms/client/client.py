@@ -34,7 +34,7 @@ def construct_ciphertext(track_id, LatH, LatL, LonH, LonL, ign):
     #add the hash to the end of the info
     json_tuple = json.dumps((track_id, LatH,LatL,LonH,LonL,ign,h))
     #encrypt the info+hash
-    c = encrypt(json_tuple, "ISJGu9lPyv+5ADkim6HCEMm+MYpTki+dBNIAjwGFM0A=")
+    c = encrypt(json_tuple, "MIpaGHRWYBhyN3DV6+lXl5rUvjwhGXQzm9vEXMXYmyM=")
     #convert track_id to base64, and this is now the start of the ciphertext. The ID is kept in plaintext so that the server knows which private key to look for.
     cipher = base64.b64encode(str.encode(track_id+","+c.decode("utf-8")))
     #append the ciphertext so that it comes after.
@@ -46,7 +46,7 @@ def init_client():
 
 def main():
     #this stuff needs to be queried from the GPS device, and then sent over either wifi or cellular depending on current connection.
-    track_id = "1"
+    track_id = "2"
     ign = "0"
     LatH = "-40"
     LatL = "795600"

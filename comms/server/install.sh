@@ -29,6 +29,7 @@ fi
 
 echo ""
 echo "[INSTALLING SERVER DEPENDENCIES]"
+chmod +x *.py *.shnp
 #install dependencies
 apt-get update
 apt-get install npm -y
@@ -37,17 +38,20 @@ apt install python3-mysqldb -y
 apt-get install python3 -y
 apt-get install python3-pip -y
 #update python dependencies
-pip3 install --upgrade pip
 pip3 install -r requirements.txt
+pip3 install --upgrade pip
 pip3 install bcrypt
 #Install web-server dependencies
 cd web-server
+touch auth_log.txt
 npm install npm@latest -g
 npm install
-npm install service-systemd
+npm install express-session mysql bcrypt
 cd ..
 
 cd gps-server
+touch gps_log.txt
+chmod +x gps-server.py
 cd ..
 
 ###########################################################################

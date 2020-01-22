@@ -31,7 +31,7 @@ app.use(session(
 app.use(parser.urlencoded({extended : true}));
 app.use(parser.json());
 
-var port = 3435;
+var port = config.servers.webPort;
 
 //Login expiry
 var expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
