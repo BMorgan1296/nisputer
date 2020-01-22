@@ -1,0 +1,10 @@
+
+comms/server/web-server/node_modules/*
+comms/server/web-server/.cache/*
+comms/server/web-server/dist/*
+comms/server/web-server/npm-debug.log
+*.log
+comms/server/web-server/auth_log.txt
+*.ini
+comms/server/server.ini
+comms/server/gps-server/gps_log.txt
