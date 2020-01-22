@@ -62,7 +62,7 @@ echo "Do you wish to install the MySQL database locally (yes/no)"
 read answer
 if [ "$answer" != "${answer#[Yy]}" ] ;then
 	#https://superuser.com/questions/56743/mysql-wont-start
-	apt-get install mysql-server mysql-client -y
+	apt-get install mariadb-server mariadb-client -y
 	service mysql restart
     mysql_secure_installation
 
