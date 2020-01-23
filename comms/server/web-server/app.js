@@ -11,10 +11,7 @@ const ini = require('ini');
 var app = express();
 
 //Parse ini file
-var path = document.location.pathname;
-var directory = path.substring(path.indexOf('/'), path.lastIndexOf('/'));
-console.log(directory)
-const config = ini.parse(fs.readFileSync('/home/pi/nisputer/comms/server/server.ini', 'utf-8'));
+const config = ini.parse(fs.readFileSync('../server.ini', 'utf-8'));
 //Create MYSQL connection
 var connection = mysql.createConnection(
 {

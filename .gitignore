@@ -8,3 +8,5 @@ comms/server/web-server/auth_log.txt
 *.ini
 comms/server/server.ini
 comms/server/gps-server/gps_log.txt
+comms/server/web-server_log.txt
+comms/server/gps-server_log.txt

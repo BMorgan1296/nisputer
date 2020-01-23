@@ -60,7 +60,6 @@ echo ""
 echo "[MYSQL SETUP]"
 dbIp="127.0.0.1"
 dbPort="3306"
-echo -n "" > server.ini
 echo "Setting root only permissions for server.ini..."
 chmod 600 server.ini
 echo "Done."
@@ -76,12 +75,14 @@ if [ "$answer" != "${answer#[Yy]}" ] ;then
 
 	echo "MySQL IP: 127.0.0.1"
 	echo "MySQL Port: 3306"
+	echo -n "" > server.ini
 	echo "ip=127.0.0.1" >> server.ini
 	echo "port=3306" >> server.ini
 else
 	dbIP=$(nonEmptyInput "Please enter in the IP address of the MySQL server:")
 	dbPort=$(nonEmptyInput "Please enter in the port number of the MySQL server:")
 
+	echo -n "" > server.ini
 	echo "ip=$dbIP" >> server.ini
 	echo "port=$dbPort" >> server.ini
 fi
@@ -108,7 +109,7 @@ echo "gpsPort=$gpsPort" >> server.ini
 
 ###########################################################################
 echo ""
-echo "You may add gps-server/gps-server.py and web-server/app.js as system services with systemd: https://www.dexterindustries.com/howto/run-a-program-on-your-raspberry-pi-at-startup/"
+echo "You may add start.sh as a system service with systemd: https://www.dexterindustries.com/howto/run-a-program-on-your-raspberry-pi-at-startup/"
 echo ""
 echo "** Do not forget to port forward if needed, and modify firewall accordingly! Check server.ini for reference **"
 echo "** It is recommended that all security steps are followed at: https://www.raspberrypi.org/documentation/configuration/security.md **"
