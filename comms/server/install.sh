@@ -29,7 +29,7 @@ fi
 
 echo ""
 echo "[INSTALLING SERVER DEPENDENCIES]"
-chmod +x *.py *.shnp
+chmod +x *.py *.sh
 #install dependencies
 apt-get update
 apt-get install npm -y
@@ -45,8 +45,8 @@ pip3 install bcrypt
 cd web-server
 touch auth_log.txt
 npm install npm@latest -g
-npm install
-npm install express-session mysql bcrypt
+npm install -g
+npm install express-session mysql bcrypt -g
 cd ..
 
 cd gps-server
@@ -105,35 +105,12 @@ webPort=$(nonEmptyInput "Which port will the web server run on?")
 echo "webPort=$webPort" >> server.ini
 gpsPort=$(nonEmptyInput "Which port will the GPS server run on?")
 echo "gpsPort=$gpsPort" >> server.ini
-echo "** Do not forget to port forward if needed, and modify firewall accordingly! Check server.ini for reference **"
 
 ###########################################################################
-
-# echo ""
-# echo "[AUTORUN CONFIGURATION]"
-# echo "Do you wish to configure the servers to run at startup as daemons? (yes/no)"
-# read answer
-# if [ "$answer" != "${answer#[Yy]}" ] ;then
-# 	echo "Using systemd to autostart services after reboot or crash..."
-# 	systemctl enable mysqld.service
-# 	temp="[Unit]
-# Description=Starts nisputer tracker web and gps servers
-# After=multi-user.target
-
-# [Service]
-# ExecStart=/usr/bin/python3 $PWD/gps-server/gps-server.py
-
-# [Install]
-# WantedBy=multi-user.target"
-# 	echo $temp > /lib/systemd/system/nisputer-gps-server.service
-# 	systemctl daemon-reload
-# 	systemctl enable nisputer-gps-server.service
-
-# 	service-systemd --add --service nisputer-web-server.service --cwd $PWD/web-server --app app.js
-# 	service nisputer-web-server.service restart
-# else
-# 	echo "Servers must started manually using start.sh"
-# fi
+echo ""
+echo "You may add gps-server/gps-server.py and web-server/app.js as system services with systemd: https://www.dexterindustries.com/howto/run-a-program-on-your-raspberry-pi-at-startup/"
+echo ""
+echo "** Do not forget to port forward if needed, and modify firewall accordingly! Check server.ini for reference **"
 echo "** It is recommended that all security steps are followed at: https://www.raspberrypi.org/documentation/configuration/security.md **"
 echo "** I take no responsibility for any misconfiguration. I have designed this to run on a Raspberry Pi Zero. **"
 echo ""
