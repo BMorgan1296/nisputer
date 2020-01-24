@@ -1,4 +1,4 @@
-var express = require("express");
+
 var session = require('express-session');
 var sanitizer = require('sanitizer');
 var parser = require("body-parser");
@@ -8,6 +8,15 @@ var helmet = require('helmet');
 var bcrypt = require('bcrypt');
 const fs = require('fs');
 const ini = require('ini');
+const https = require('https');
+
+var privateKey  = fs.readFileSync('key.pem', 'utf8');
+var certificate = fs.readFileSync('cert.pem', 'utf8');
+
+var credentials = {key: privateKey, cert: certificate};
+
+
+var express = require("express");
 var app = express();
 
 //Parse ini file
@@ -52,7 +61,6 @@ function getFileFlag(filename) {
         return 'w';
     }
 }
-
 
 app.use(parser.urlencoded(
 {
@@ -264,10 +272,10 @@ app.get("/getName", function(req, res)
     }
 });
 
-//Start the server and make it listen for connections on port 8080
 
-app.listen(port);
+var httpsServer = https.createServer(credentials, app);
+httpsServer.listen(port);
 
-console.log("Nisputer Web Server running at\n  => http://127.0.0.1:" + port + "/\nCTRL + C to shutdown")
+console.log("Nisputer Web Server running at\n  => https://127.0.0.1:" + port + "/\nCTRL + C to shutdown")
 
 module.exports = app;

@@ -46,7 +46,10 @@ cd web-server
 touch auth_log.txt
 npm install npm@latest -g
 npm install -g
-npm install express-session mysql bcrypt -g
+npm install express-session mysql bcrypt https -g
+npm install n -g
+n stable
+npm rebuild
 cd ..
 
 cd gps-server

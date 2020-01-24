@@ -10,3 +10,6 @@ comms/server/server.ini
 comms/server/gps-server/gps_log.txt
 comms/server/web-server_log.txt
 comms/server/gps-server_log.txt
+comms/server/web-server/getssl
+comms/server/web-server/cert.pem
+comms/server/web-server/key.pem
