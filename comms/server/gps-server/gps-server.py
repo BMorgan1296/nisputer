@@ -116,7 +116,7 @@ def  deconstruct_ciphertext(cipher):
         return False
 
 def init_server(port):    
-    UDP_IP_ADDRESS = "127.0.0.1"
+    UDP_IP_ADDRESS = ""
     UDP_PORT_NO = int(port)
     serverSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     serverSock.bind((UDP_IP_ADDRESS, UDP_PORT_NO))
@@ -156,4 +156,4 @@ def main():
                 print_log("Error: Check web server status, could not send data")
   
 if __name__== "__main__":
-  main()
+    main()
