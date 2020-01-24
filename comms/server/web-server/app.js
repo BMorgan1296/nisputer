@@ -211,13 +211,21 @@ app.get("/getCoords", function(req, res)
         var query = 'SELECT * FROM accounts WHERE username = ?';
         connection.query(query, [username], function(error, results, fields)
         {
-            res.send(JSON.stringify(
+            if(res == undefined)
             {
-               lat: Number(results[0].lat),
-               lon: Number(results[0].lon),
-               ign: Number(results[0].ign),
-               recvTime: Number(results[0].recvTime)
-            }));
+                res.redirect('/logout');
+            }
+            else
+            {
+                res.send(JSON.stringify(
+                {
+                   lat: Number(results[0].lat),
+                   lon: Number(results[0].lon),
+                   ign: Number(results[0].ign),
+                   recvTime: Number(results[0].recvTime)
+                }));                
+            }
+
         });
     }
     else

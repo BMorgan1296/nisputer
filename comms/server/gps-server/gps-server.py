@@ -146,6 +146,7 @@ def main():
     webPort = parser.get('servers', 'webPort')
     gpsPort = parser.get('servers', 'gpsPort')
     serverSock = init_server(gpsPort)
+    print("GPS-server running on port", gpsPort)
     while True:
         data, addr = serverSock.recvfrom(2048)
         raw_tuple = deconstruct_ciphertext(data)
