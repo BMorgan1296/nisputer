@@ -10,6 +10,7 @@ import hashlib
 import base64
 from Crypto.Cipher import AES
 from Crypto import Random
+
 from configparser import ConfigParser
 
 #Thanks to https://www.quickprogrammingtips.com/python/aes-256-encryption-and-decryption-in-python.html
@@ -45,8 +46,13 @@ def init_client():
     return clientSock
 
 def main():
+    parser = ConfigParser()
+    parser.read('../server.ini')
+    track_id = parser.get('data_transfer', 'local_ip')
+    domain = parser.get('data_transfer', 'domain')
+    port = parser.get('data_transfer', 'port')
+    aes_key = parser.get('data_transfer', 'aes_key')
     #this stuff needs to be queried from the GPS device, and then sent over either wifi or cellular depending on current connection.
-    track_id = "2"
     ign = "0"
     LatH = "-40"
     LatL = "795600"
