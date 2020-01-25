@@ -25,7 +25,7 @@ def encrypt(raw, password):
     cipher = AES.new(private_key, AES.MODE_CBC, iv)
     return base64.b64encode(iv + cipher.encrypt(raw.encode("utf-8")))
 
-def construct_ciphertext(track_id, LatH, LatL, LonH, LonL, ign):
+def construct_ciphertext(track_id, LatH, LatL, LonH, LonL, ign, aes_key):
     #convert to tuple
     raw_tuple = (track_id, LatH,LatL,LonH,LonL,ign)
     #hash the tuple
@@ -35,21 +35,18 @@ def construct_ciphertext(track_id, LatH, LatL, LonH, LonL, ign):
     #add the hash to the end of the info
     json_tuple = json.dumps((track_id, LatH,LatL,LonH,LonL,ign,h))
     #encrypt the info+hash
-    c = encrypt(json_tuple, "MIpaGHRWYBhyN3DV6+lXl5rUvjwhGXQzm9vEXMXYmyM=")
+    c = encrypt(json_tuple, aes_key)
     #convert track_id to base64, and this is now the start of the ciphertext. The ID is kept in plaintext so that the server knows which private key to look for.
     cipher = base64.b64encode(str.encode(track_id+","+c.decode("utf-8")))
     #append the ciphertext so that it comes after.
     return cipher
 
-def init_client():
-    clientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    return clientSock
-
 def main():
     parser = ConfigParser()
-    parser.read('../server.ini')
-    track_id = parser.get('data_transfer', 'local_ip')
+    parser.read('./client.ini')
+    track_id = parser.get('data_transfer', 'track_id')
     domain = parser.get('data_transfer', 'domain')
+    local_ip = parser.get('data_transfer', 'local_ip')
     port = parser.get('data_transfer', 'port')
     aes_key = parser.get('data_transfer', 'aes_key')
     #this stuff needs to be queried from the GPS device, and then sent over either wifi or cellular depending on current connection.
@@ -59,11 +56,11 @@ def main():
     LonH = "153"
     LonL = "637571"
 
-    cipher = construct_ciphertext(track_id, LatH, LatL, LonH, LonL, ign)
+    cipher = construct_ciphertext(track_id, LatH, LatL, LonH, LonL, ign, aes_key)
 ######################################### Will need this socket info, aes_key and id stuff to be in a ini file or something at some point, so that the user can set it up themselves.#############################################
-    UDP_IP_ADDRESS = "127.0.0.1"
-    UDP_PORT_NO = 3436
-    clientSock = init_client()
+    UDP_IP_ADDRESS = local_ip
+    UDP_PORT_NO = int(port)
+    clientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     while 1:
         time.sleep(3)
