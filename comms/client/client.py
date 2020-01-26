@@ -2,7 +2,8 @@
 #Nisputer
 #client.py 
 #B Morgan
-#For receiving GPS information from satellites, then transmitting this over Australian celullar network to the server.
+#Driver program for receiving GPS information from satellites, then transmitting this over Australian celullar network to the server.
+
 import time
 import socket
 import json
@@ -16,7 +17,6 @@ from configparser import ConfigParser
 #Thanks to https://www.quickprogrammingtips.com/python/aes-256-encryption-and-decryption-in-python.html
 BLOCK_SIZE = 16
 pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * chr(BLOCK_SIZE - len(s) % BLOCK_SIZE)
-unpad = lambda s: s[:-ord(s[len(s) - 1:])]
 
 def encrypt(raw, password):
     private_key = hashlib.sha256(password.encode("utf-8")).digest()
@@ -26,19 +26,12 @@ def encrypt(raw, password):
     return base64.b64encode(iv + cipher.encrypt(raw.encode("utf-8")))
 
 def construct_ciphertext(track_id, LatH, LatL, LonH, LonL, ign, aes_key):
-    #convert to tuple
-    raw_tuple = (track_id, LatH,LatL,LonH,LonL,ign)
-    #hash the tuple
-    h = hashlib.sha256(''.join(raw_tuple).encode("utf-8")).digest()
-    #Encode in base64
-    h = base64.b64encode(h).decode("utf-8")
-    #add the hash to the end of the info
-    json_tuple = json.dumps((track_id, LatH,LatL,LonH,LonL,ign,h))
-    #encrypt the info+hash
-    c = encrypt(json_tuple, aes_key)
-    #convert track_id to base64, and this is now the start of the ciphertext. The ID is kept in plaintext so that the server knows which private key to look for.
-    cipher = base64.b64encode(str.encode(track_id+","+c.decode("utf-8")))
-    #append the ciphertext so that it comes after.
+    raw_tuple = (track_id, LatH,LatL,LonH,LonL,ign)                         #convert to tuple
+    h = hashlib.sha256(''.join(raw_tuple).encode("utf-8")).digest()         #hash the tuple   
+    h = base64.b64encode(h).decode("utf-8")                                 #Encode in base64
+    json_tuple = json.dumps((track_id, LatH,LatL,LonH,LonL,ign,h))          #add the hash to the end of the info
+    c = encrypt(json_tuple, aes_key)                                        #encrypt the info+hash
+    cipher = base64.b64encode(str.encode(track_id+","+c.decode("utf-8")))   #The ID is kept in plaintext so that the server knows which private key to look for.
     return cipher
 
 def main():

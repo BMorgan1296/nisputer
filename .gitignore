@@ -13,3 +13,4 @@ comms/server/gps-server_log.txt
 comms/server/web-server/getssl
 comms/server/web-server/cert.pem
 comms/server/web-server/key.pem
+comms/client/test.py
