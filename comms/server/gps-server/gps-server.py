@@ -26,8 +26,9 @@ import hashlib
 import base64
 from Crypto.Cipher import AES
 
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+import requests
+import certifi
+import urllib3
 
 from configparser import ConfigParser
 
@@ -124,7 +125,7 @@ def init_server(port):
 
 def post_data_to_server(data, port):
     #The web server is running locally, the this python script which receives the data just sends it decrypted over post as this is easiest way.
-    url = 'http://127.0.0.1:'+port+'/setCoords' # Set destination URL here
+    url = 'https://127.0.0.1:'+port+'/setCoords' # Set destination URL here
     track_id = data[0]
     lat = data[1]+"."+data[2]
     lon = data[3]+"."+data[4]
@@ -137,8 +138,7 @@ def post_data_to_server(data, port):
         'ign': ign
     }
 
-    request = Request(url, urlencode(post_fields).encode())
-    json = urlopen(request).read().decode()
+    response = requests.post(url, data=post_fields, verify=False)
 
 def main():
     parser = ConfigParser()
@@ -146,6 +146,8 @@ def main():
     webPort = parser.get('servers', 'webPort')
     gpsPort = parser.get('servers', 'gpsPort')
     serverSock = init_server(gpsPort)
+    #Disable SSL warnings, as we will be sending the information to localhost, so MITM attacks don't really matter at this point.
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     print("GPS-server running on port", gpsPort)
     while True:
         data, addr = serverSock.recvfrom(2048)

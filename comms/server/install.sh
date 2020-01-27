@@ -38,9 +38,11 @@ apt install python3-mysqldb -y
 apt-get install python3 -y
 apt-get install python3-pip -y
 #update python dependencies
-pip3 install -r requirements.txt
 pip3 install --upgrade pip
+pip3 install -r requirements.txt
 pip3 install bcrypt
+pip3 install requests
+pip3 install urllib3[secure]
 #Install web-server dependencies
 cd web-server
 touch auth_log.txt
