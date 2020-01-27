@@ -6,13 +6,13 @@ if [ `whoami` != root ]; then
 fi
 sudo service mysql restart
 
-cd gps-server
+cd $(dirname "$0")/gps-server
 echo "Starting GPS server..."
 sudo ./gps-server.py &
 echo "Done."
 cd ..
 
-cd web-server
+cd $(dirname "$0")/web-server
 echo "Starting web server..."
 sudo node app.js &
 echo "Done."
