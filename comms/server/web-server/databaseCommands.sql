@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS `accounts` (
   `email` varchar(100) NOT NULL,
   `lat` varchar(50) DEFAULT '0',
   `lon` varchar(50) DEFAULT '0',
+  `spd` varchar(50) DEFAULT '0',
+  `hdg` varchar(50) DEFAULT '0',
   `ign` varchar(1) DEFAULT '0',
   `recvTime` varchar(512) DEFAULT '0',  
   `aes_key` varchar(50) DEFAULT '0'

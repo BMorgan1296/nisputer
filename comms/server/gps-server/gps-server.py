@@ -126,16 +126,14 @@ def init_server(port):
 def post_data_to_server(data, port):
     #The web server is running locally, the this python script which receives the data just sends it decrypted over post as this is easiest way.
     url = 'https://127.0.0.1:'+port+'/setCoords' # Set destination URL here
-    track_id = data[0]
-    lat = data[1]+"."+data[2]
-    lon = data[3]+"."+data[4]
-    ign = data[5]
-
+    
     post_fields = {
-        'id': track_id,
-        'lat': lat,
-        'lon': lon,
-        'ign': ign
+        'id':  data[0],
+        'lat': data[1],
+        'lon': data[2],
+        'spd': data[3],
+        'hdg': data[4],
+        'ign': data[5]
     }
 
     response = requests.post(url, data=post_fields, verify=False)

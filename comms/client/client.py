@@ -25,11 +25,11 @@ def encrypt(raw, password):
     cipher = AES.new(private_key, AES.MODE_CBC, iv)
     return base64.b64encode(iv + cipher.encrypt(raw.encode("utf-8")))
 
-def construct_ciphertext(track_id, LatH, LatL, LonH, LonL, ign, aes_key):
-    raw_tuple = (track_id, LatH,LatL,LonH,LonL,ign)                         #convert to tuple
+def construct_ciphertext(track_id, lat, lon, spd, hdg, ign, aes_key):
+    raw_tuple = (track_id, lat,lon,spd,hdg,ign)                         #convert to tuple
     h = hashlib.sha256(''.join(raw_tuple).encode("utf-8")).digest()         #hash the tuple   
     h = base64.b64encode(h).decode("utf-8")                                 #Encode in base64
-    json_tuple = json.dumps((track_id, LatH,LatL,LonH,LonL,ign,h))          #add the hash to the end of the info
+    json_tuple = json.dumps((track_id, lat,lon,spd,hdg,ign,h))          #add the hash to the end of the info
     c = encrypt(json_tuple, aes_key)                                        #encrypt the info+hash
     cipher = base64.b64encode(str.encode(track_id+","+c.decode("utf-8")))   #The ID is kept in plaintext so that the server knows which private key to look for.
     return cipher
@@ -44,12 +44,12 @@ def main():
     aes_key = parser.get('data_transfer', 'aes_key')
     #this stuff needs to be queried from the GPS device, and then sent over either wifi or cellular depending on current connection.
     ign = "0"
-    LatH = "-40"
-    LatL = "795600"
-    LonH = "153"
-    LonL = "637571"
+    lat = "-40.795600"
+    lon = "153.637571"
+    spd = "59.5"
+    hdg = "364.5"
 
-    cipher = construct_ciphertext(track_id, LatH, LatL, LonH, LonL, ign, aes_key)
+    cipher = construct_ciphertext(track_id, lat, lon, spd, hdg, ign, aes_key)
 ######################################### Will need this socket info, aes_key and id stuff to be in a ini file or something at some point, so that the user can set it up themselves.#############################################
     UDP_IP_ADDRESS = local_ip
     UDP_PORT_NO = int(port)

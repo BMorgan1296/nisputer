@@ -26,7 +26,18 @@ if [ `whoami` != root ]; then
 fi
 
 ###########################################################################
+echo ""
+echo "[INSTALLING SERVER DEPENDENCIES]"
+chmod +x *.py *.sh
 
+apt-get update -y
+apt-get upgrade -y
+apt-get install python3 -y
+apt-get install python3-pip -y
+#update python dependencies
+pip3 install --upgrade pip
+pip3 install -r requirements.txt
+pip3 install pyserial
 
 echo "Setting root only permissions for client.ini..."
 chmod 600 client.ini

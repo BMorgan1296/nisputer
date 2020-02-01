@@ -248,11 +248,13 @@ app.post("/setCoords", function(req, res)
     var id = sanitizer.sanitize(req.body.id);
     var lat = sanitizer.sanitize(req.body.lat);
     var lon = sanitizer.sanitize(req.body.lon);
+    var spd = sanitizer.sanitize(req.body.spd);
+    var hdg = sanitizer.sanitize(req.body.hdg);
     var ign = sanitizer.sanitize(req.body.ign);
     var recvTime = new Date().getTime();
 
-    var query = 'UPDATE accounts SET lat = ?, lon = ?, ign = ?, recvTime = ? WHERE id = ?';
-    connection.query(query, [lat, lon, ign, recvTime, id], function(error, results, fields)
+    var query = 'UPDATE accounts SET lat = ?, lon = ?, spd = ?, hdg = ?, ign = ?, recvTime = ? WHERE id = ?';
+    connection.query(query, [lat, lon, spd, hdg, ign, recvTime, id], function(error, results, fields)
     {
         if(error)
             console.log(error);

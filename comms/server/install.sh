@@ -31,7 +31,8 @@ echo ""
 echo "[INSTALLING SERVER DEPENDENCIES]"
 chmod +x *.py *.sh
 #install dependencies
-apt-get update
+apt-get update -y
+apt-get upgrade -y
 apt-get install npm -y
 apt-get install nodejs -y
 apt install python3-mysqldb -y

@@ -1,6 +1,4 @@
 var map;
-var markerLat = 0.0;
-var markerLon = 0.0;
 var recvTime = 0;
 var imgSrc = "https://upload.wikimedia.org/wikipedia/commons/e/ec/RedDot.svg";
 
@@ -36,36 +34,33 @@ function updateMarkerPosition(init)
       if (this.readyState == 4 && this.status == 200) 
       {
         res = JSON.parse(this.responseText);
-
-        markerLat = res.lat;
-        markerLon = res.lon;
-        ign = res.ign;
         recvTime = res.recvTime;
 
         if(init == 1)
         {
-            initialise_map();
-            set_marker();
-            //<a href="http://maps.google.com/maps?q=BLABHLABLAH+(shisthishtihtis)+%4046.090271,6.657248">Link to Car</a>
+            initialise_map(res.lat, res.lon);
+            set_marker(res.lat, res.lon);
         }
         else
         {
             clear_marker();
             set_marker();
         }
-        if(ign)
+        document.getElementById("spd").innerHTML = "Speed: "+res.spd+"km/h";
+        document.getElementById("hdg").innerHTML = "Heading: "+res.hdg+"&deg;";
+        if(res.ign)
             document.getElementById("ign").innerHTML = "Car Ignition: ON";
         else
             document.getElementById("ign").innerHTML = "Car Ignition: OFF";
 
-        document.getElementById("link").href = "http://maps.google.com/maps?q="+markerLat+","+markerLon;
+        document.getElementById("link").href = "http://maps.google.com/maps?q="+res.lat+","+res.lon;
       }
     };
     xhttp.open("GET", "/getCoords", true);
     xhttp.send();
 }
 
-function initialise_map()
+function initialise_map(lat, lon)
 {
     map = new ol.Map(
     {
@@ -81,13 +76,13 @@ function initialise_map()
         ],
         view: new ol.View(
         {
-            center: ol.proj.fromLonLat([markerLon, markerLat]),
+            center: ol.proj.fromLonLat([lat, lon]),
             zoom: 11
         })
     });
 }
 
-function set_marker() 
+function set_marker(lat, lon)
 {
     vectorLayer = new ol.layer.Vector(
     {
@@ -95,7 +90,7 @@ function set_marker()
         {
             features: [new ol.Feature(
             {
-                geometry: new ol.geom.Point(ol.proj.transform([markerLon, markerLat], 'EPSG:4326', 'EPSG:3857')),
+                geometry: new ol.geom.Point(ol.proj.transform([lat, lon], 'EPSG:4326', 'EPSG:3857')),
             })]
         }),
         style: new ol.style.Style(
