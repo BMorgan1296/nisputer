@@ -27,12 +27,12 @@ def encrypt(raw, password):
 
 def construct_ciphertext(track_id, lat, lon, spd, hdg, ign, aes_key):
     raw_tuple = (track_id, lat,lon,spd,hdg,ign)                         #convert to tuple
-    h = hashlib.sha256(''.join(raw_tuple).encode("utf-8")).digest()         #hash the tuple   
+    h = hashlib.sha256(''.join(raw_tuple).encode("utf-8")).digest()         #hash the tuple
     h = base64.b64encode(h).decode("utf-8")                                 #Encode in base64
     json_tuple = json.dumps((track_id, lat,lon,spd,hdg,ign,h))          #add the hash to the end of the info
     c = encrypt(json_tuple, aes_key)                                        #encrypt the info+hash
-    cipher = base64.b64encode(str.encode(track_id+","+c.decode("utf-8")))   #The ID is kept in plaintext so that the server knows which private key to look for.
-    return cipher
+    cipher = track_id+","+c.decode("utf-8") #The ID is kept in plaintext so that the server knows which private key to look for.
+    return cipher.encode()
 
 def main():
     parser = ConfigParser()
@@ -44,7 +44,7 @@ def main():
     aes_key = parser.get('data_transfer', 'aes_key')
     #this stuff needs to be queried from the GPS device, and then sent over either wifi or cellular depending on current connection.
     ign = "0"
-    lat = "-40.795600"
+    lat = "-41.895600"
     lon = "153.637571"
     spd = "59.5"
     hdg = "364.5"
@@ -58,6 +58,7 @@ def main():
     while 1:
         time.sleep(3)
         clientSock.sendto(cipher, (UDP_IP_ADDRESS, UDP_PORT_NO))
+        print(cipher)
 
     #Get data, create raw to be encrypted, encrypt, send off. Repeat.
 if __name__== "__main__":

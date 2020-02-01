@@ -82,8 +82,7 @@ def decrypt(enc, password):
     return unpad(cipher.decrypt(enc[16:]))
 
 def  deconstruct_ciphertext(cipher):
-    parts = base64.b64decode(cipher)
-    parts = parts.decode("utf-8").split(',')
+    cipher = cipher.decode("utf-8").split(',')
     password = get_aes_key(parts[0])
     message = decrypt(str.encode(parts[1]), str(password))
     try:
