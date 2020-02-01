@@ -53,7 +53,7 @@ function updateMarkerPosition(init)
         else
             document.getElementById("ign").innerHTML = "Car Ignition: OFF";
 
-        document.getElementById("link").href = "http://maps.google.com/maps?q="+res.lat+","+res.lon;
+        document.getElementById("link").href = "https://maps.google.com/maps?q="+res.lat+","+res.lon;
       }
     };
     xhttp.open("GET", "/getCoords", true);

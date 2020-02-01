@@ -229,6 +229,8 @@ app.get("/getCoords", function(req, res)
                 {
                    lat: Number(results[0].lat),
                    lon: Number(results[0].lon),
+                   spd: Number(results[0].spd),
+                   hdg: Number(results[0].hdg),
                    ign: Number(results[0].ign),
                    recvTime: Number(results[0].recvTime)
                 }));                
