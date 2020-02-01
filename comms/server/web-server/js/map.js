@@ -35,18 +35,20 @@ function updateMarkerPosition(init)
       {
         res = JSON.parse(this.responseText);
         recvTime = res.recvTime;
+        lat = res.lat
+        lon = res.lon
 
         if(init == 1)
         {
-            initialise_map(res.lat, res.lon);
-            set_marker(res.lat, res.lon);
+            initialise_map(lat, lon);
+            set_marker(lat, lon);
         }
         else
         {
             clear_marker();
-            set_marker();
+            set_marker(lat, lon);
         }
-        document.getElementById("spd").innerHTML = "Speed: "+res.spd+"km/h";
+        document.getElementById("spd").innerHTML = "Speed: "+res.spd+" km/h";
         document.getElementById("hdg").innerHTML = "Heading: "+res.hdg+"&deg;";
         if(res.ign)
             document.getElementById("ign").innerHTML = "Car Ignition: ON";
@@ -76,7 +78,7 @@ function initialise_map(lat, lon)
         ],
         view: new ol.View(
         {
-            center: ol.proj.fromLonLat([lat, lon]),
+            center: ol.proj.fromLonLat([lon, lat]),
             zoom: 11
         })
     });
@@ -90,7 +92,7 @@ function set_marker(lat, lon)
         {
             features: [new ol.Feature(
             {
-                geometry: new ol.geom.Point(ol.proj.transform([lat, lon], 'EPSG:4326', 'EPSG:3857')),
+                geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857')),
             })]
         }),
         style: new ol.style.Style(

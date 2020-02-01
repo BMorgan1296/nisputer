@@ -1,48 +1,13 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.0.1/css/ol.css" type="text/css">
-    <link rel="stylesheet" type="text/css" href="css/map.css">
-    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.0.1/build/ol.js"></script>
-    <title>NisTrack</title>
-    <style>
-        .tracking {
-            width: 300px;
-            margin: 0 auto;
-            font-family: Tahoma, Geneva, sans-serif;
-        }
-        
-        .tracking h1 {
-            text-align: center;
-            color: #4d4d4d;
-            font-size: 24px;
-            padding: 20px 0 20px 0;
-        }
-        
-        .tracking input[type="password"],
-        .tracking input[type="text"] {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid #dddddd;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-        }
-        
-        .tracking input[type="submit"] {
-            width: 100%;
-            padding: 15px;
-            background-color: #535b63;
-            border: 0;
-            box-sizing: border-box;
-            cursor: pointer;
-            font-weight: bold;
-            color: #ffffff;
-        }
-    </style>
-    <script src="https://openlayers.org/api/OpenLayers.js"></script>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/css/ol.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="css/map.css" />
     <script type="text/javascript" src="../js/map.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js"></script>
+    <title>NisTrack</title>
 </head>
 
 <body>
@@ -50,9 +15,9 @@
         <h1>NisTrack Car Tracker</h1>
         <p id="name">Logged in as:</p>
         <form action="logout" method="POST">
-            <input type="submit" value="Logout">
+            <input type="submit" value="Logout" />
         </form>
-        <br>
+        <br />
         <p id="spd">Speed: 0.0 km/h</p>
         <p id="hdg">Heading: 0.0&deg;</p>
         <p id="ign">Car Ignition: OFF</p>
