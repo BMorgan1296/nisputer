@@ -1,3 +1,5 @@
+**NOT CURRENTLY IN DEVELOPMENT**
+
 ---------- Nisputer ----------
 By Brad M and Brendan W
 Graphics by Isaac L
